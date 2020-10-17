@@ -44,3 +44,39 @@ group by c.region_id
 order by qty desc
 ```
 
+/* Count required count by semester in the year 2003 */
+```
+select
+ count(if(requiredDate like '2003-%', 1, NULL)) as 'all',
+ count(if(requiredDate between '2003-01-01' and '2003-06-30', 1, NULL)) 
+  as 'first',
+ count(if(requiredDate between '2003-07-01' and '2003-12-31', 1, NULL)) 
+  as 'second'
+from orders
+```
+
+/* Same as above without using if function (yields transposed matrix) */
+```
+select
+  queryWithSemester.semester,
+  count(queryWithSemester.semester) as 'count'
+from (
+  select
+   *,
+   (select if(requiredDate between '2003-01-01' and '2003-06-30', 'first', 'second')) 
+    as semester
+  from orders
+) as queryWithSemester 
+where queryWithSemester.requiredDate like '2003-%'
+group by queryWithSemester.semester
+```
+
+/* Count required count by month in the year 2003 */
+```
+select
+  month(o.requiredDate) as mth,
+  count(*) as count
+from orders o
+where requiredDate like '2003-%'
+group by mth
+```
