@@ -80,3 +80,14 @@ from orders o
 where requiredDate like '2003-%'
 group by mth
 ```
+
+/* Union result sets */
+```
+select 
+  customerNumber as id, customerLastName as name
+from customers
+union
+select employeeNumber as id, firstName as name
+from employees
+order by name, id
+```
